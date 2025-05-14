@@ -109,7 +109,6 @@ docker build -f Dockerfile.server -t fastapi-server:latest .
 ```
 
 Minikubeにpodを作成するためのYAMLを与える：
-:::details fastapi-deployment.yaml 
 ```yaml:fastapi-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -145,7 +144,6 @@ spec:
       targetPort: 8000
   type: ClusterIP
 ```
-:::
 
 そして適用する：
 
@@ -194,7 +192,6 @@ docker build -f Dockerfile.locust -t my-locust-image .
 worker-podの数は必ずしも2個である必要はないことには留意してほしい。Locustで4つのworker threadを立てたければ下記で示すYAMLの該当箇所を4にすればよい。
 
 まず、master-pod用のYAMLは
-:::details locust-master.yaml
 ```yaml:locust-master.yaml
 apiVersion: v1
 kind: Service
@@ -246,11 +243,9 @@ spec:
             - containerPort: 5557
             - containerPort: 5558
 ```
-:::
 
 である。続いて、worker用のYAMLは
 
-:::details locust-worker.yaml
 ```yaml:locust-worker.yaml
 # locust-worker.yaml
 apiVersion: apps/v1
@@ -275,7 +270,6 @@ spec:
           imagePullPolicy: Never
           args: ["-f", "/locustfile.py", "--worker", "--master-host=locust-master"]
 ```
-:::
 である。これら2つのYAMLをMinikubeにapplyする：
 ```sh
 kubectl apply -f locust-master.yaml
@@ -319,12 +313,10 @@ kubectl get svc locust-master -o json | jq '.spec.ports'
 が表示されるので、port 8089に対応するURLにアクセスする。
 ※画像例では[http://localhost:31642/](http://localhost:31642/)にアクセス。
 
-:::message
-jqコマンドが環境に存在しない場合はHomebrewでインストールするとよい。Macでは
+※jqコマンドが環境に存在しない場合はHomebrewでインストールするとよい。Macでは
 ```
 brew install jq
 ```
-:::
 
 # 結果
 上記のURLにアクセスすることで、Locustを使用することができる。画像のWorkerに着目してほしい。確かに、**Workerが2と表示**されている。
