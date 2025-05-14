@@ -1,0 +1,22 @@
+# locust-worker.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: locust-worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: locust
+      role: worker
+  template:
+    metadata:
+      labels:
+        app: locust
+        role: worker
+    spec:
+      containers:
+        - name: locust
+          image: my-locust-image
+          imagePullPolicy: Never
+          args: ["-f", "/locustfile.py", "--worker", "--master-host=locust-master"]
